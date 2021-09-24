@@ -1,0 +1,23 @@
+Een request begint bij het intypen van een url in de browser.
+Als je op enter klinkt wordt er een request gestuurd naar de server.
+
+In de request zit de URL.
+De request komt aan bij de front controller (de enige ingang van de website(voordeur))
+.htacces stuurt alles naar indes.php
+
+Dus in de public map zit een bestand genaamd .htacces, die stuurt / herschrijft je naar index.php (de front controller)
+Als de request bij de front controller is aangekomen, ga je daarna naar het volgende onderdeel, de router
+
+De router doet niks anders dan de request die binnen komt matchen / opzoeken in een tabel met routes.
+De router bevat de informatie over wat er met de url moet gebreuren.
+
+De router ziet dat er een bekende route is dus wordt de route gematched. Je kan dan zien welke actie eraan is gekoppeld.
+In routes.pp zie je de routes.
+
+Er wordt daarna aan de front controller dooorgegeven dat de juiste URL is gevonden. Er word dan doorgegeven wat de controller is en waar de persoon
+naartoe gestuurd moet worden. De router is daarna klaar met zijn werk en wact op de volgende URL
+
+Als de URL niet bestaat wordt je doorgestuurd naar een 404 pagina (staat ook in routes.php)
+
+De controller wordt aangeroepen.
+Na de controller komt de vieuw. Dus wordt de website aangepast visueel (html, css)
