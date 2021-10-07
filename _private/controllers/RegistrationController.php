@@ -22,7 +22,7 @@ class RegistrationController {
 		$errors = [];
 
 		//Checks: valideren of het een geldige emailadres is
-		$email		= filtervar_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+		$email		= filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
 		$wachtwoord = trim( $_POST['wachtwoord'] );
 
 		if ( $email === false ) {
@@ -39,7 +39,7 @@ class RegistrationController {
 
 			//check of de gebruiker al bestaat
 			$connection = dbConnect();
-			$sql		= "SELECET * FROM `gebruikers WHERE `email` = :email";
+			$sql		= "SELECT * FROM `gebruikers` WHERE `email` = :email";
 			$statement  = $connection->prepare( $sql );
 			$statement->execute( [ 'email' => $email] );
 
@@ -53,8 +53,11 @@ class RegistrationController {
 					'wachtwoord'  => $safe_password
 				];
 				$statement->execute( $params );
-				echo "Klaar!";
-				exit;
+
+				//doorsturen naar bedankt pagina
+				$bedanktUrl = url('register.thankyou');
+				redirect($bedanktUrl);
+				//alles hierna wordt niet meer uitgevoerd
 
 
 			} else {
@@ -65,7 +68,16 @@ class RegistrationController {
 			
 		}
 
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render('register_form', ['errors' => $errors]);
 	}
 
+
+	public function registrationThankYou(){
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render("register_thankyou");
+	}
 }
 
