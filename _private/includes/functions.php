@@ -86,3 +86,111 @@ function current_route_is( $name ) {
 	return false;
 
 }
+
+
+function validateRegistrationData($data){
+	$errors = [];
+
+		//Checks: valideren of het een geldige emailadres is
+		$email		= filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+		$wachtwoord = trim( $data['wachtwoord'] );
+
+		if ( $email === false ) {
+			$errors['email'] = 'Geen geldige email ingevuld';
+		}
+
+		//Checks: wachtwoord minimaal 6 characters is
+		if ( empty ( $wachtwoord ) || strlen( $wachtwoord ) < 6 ) {
+			$errors['wachtwoord'] = 'Geen geldige wachtwoord, (minimaal 6 tekens)';
+		}
+
+		// Resultaat array
+		$data = [
+			'email' => $data['email'],
+			'wachtwoord' => $wachtwoord
+		];
+
+		return [
+			'data' => $data,
+			'errors' => $errors
+		];
+
+
+
+}
+
+function userNotRegistered($email){
+
+
+	//check of de gebruiker al bestaat
+	$connection = dbConnect();		$sql		= "SELECT * FROM `gebruikers` WHERE `email` = :email";
+	$statement  = $connection->prepare( $sql );
+	$statement->execute( [ 'email' => $email] );
+	
+	return ($statement->rowCount() === 0);
+
+}
+
+function createUSer($email, $wachtwoord){
+
+	$connection = dbConnect();
+
+	//als die er niet is dan verder met opslaan
+	$sql			= "INSERT INTO `gebruikers` (`email`, `wachtwoord`) VALUES (:email, :wachtwoord)";
+	$statement 		= $connection->prepare( $sql );
+	$safe_password  = password_hash( $wachtwoord, PASSWORD_DEFAULT );
+	$params			= [
+		'email'		  => $email,
+		'wachtwoord'  => $safe_password
+	];
+	$statement->execute( $params );
+}
+
+
+function loginUser($user){
+	$_SESSION['user_id'] = $user['id'];
+}
+
+function logoutUser(){
+	unset($_SESSION['user_id']);
+}
+
+function loggedInUser(){
+	if(!isLoggedIn()){
+		return false;
+	}
+
+	return getUserById($_SESSION['user_id']);
+
+
+}
+
+function isLoggedIn(){
+	return !empty ( $_SESSION['user_id'] );
+}
+
+function loginCheck() {
+	if ( ! isLoggedIn() ) {
+		$login_url = url( 'login.form' );
+		redirect ( $login_url );
+	}
+}
+
+function getLoggedInUserEmail(){
+
+	$email = "NIET INGELOGD";
+
+	if (!isLoggedIn()){
+		return '$email';
+	}
+
+
+	$user_id = $_SESSION['user_id'];
+	$user = getUserById($user_id);
+
+	if($user){
+		$email = $user['email'];
+	}
+
+	return $email;
+}

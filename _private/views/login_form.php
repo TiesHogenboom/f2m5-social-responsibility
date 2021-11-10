@@ -1,11 +1,9 @@
 <?php $this->layout('layouts::website');?>
 
-<h3>Inschrijven</h3>
+<h3>Login</h3>
 
-<p>Schrijf u snel in om gebruik te maken van de fantastische features</p>
-
-<form action="<?php echo url("register.handle")?>" method="POST">
-    <div class="forn-group">
+<form action="<?php echo url("login.handle")?>" method="POST">
+    <div class="form-group">
         <label for ="email">Email</label>
         <input type="email" name="email" value="<?php echo input('email')?>" class="form-control" id="email" aria-describedy="emailHelp">
         <small id="emailHelp" class="form-text text-muted">We delen uw e-mail adres met niemand, uw gegevens zijn veilig!</small>
@@ -20,5 +18,5 @@
             <?php echo $errors ['wachtwoord'] ?>
         <?php endif;?>
     </div>
-    <button type="submit" class="btn btn-primary">Registreren</button>
+    <button type="submit" class="btn btn-primary">Inloggen</button>
 </form>

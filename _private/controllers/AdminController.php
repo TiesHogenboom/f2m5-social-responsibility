@@ -14,8 +14,9 @@ class AdminController {
 
 	public function index() {
 
-		echo"admin";
 
+		$template_engine = get_template_engine();
+		echo $template_engine->render('admin/index');
 
 	}
 

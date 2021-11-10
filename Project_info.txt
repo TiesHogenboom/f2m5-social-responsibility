@@ -1,3 +1,23 @@
+    Databases
+
+        Welke gegevens
+
+        Welke naam?
+
+        Welke datatypen?
+
+        verplicht of leeg?
+
+        Datatype
+
+    Planning
+
+        Hidde videos kijken over inlog knop
+
+        Andere videos over de databse kijken
+
+        Bericht post maken
+
 # Controllers
 
 In deze directory komen al je controllers te staan

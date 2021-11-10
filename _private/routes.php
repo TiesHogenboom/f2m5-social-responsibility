@@ -3,6 +3,7 @@
 use Pecee\Http\Request;
 use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
 use Pecee\SimpleRouter\SimpleRouter;
+use Website\middleware\IsAuthenticated;
 
 SimpleRouter::setDefaultNamespace( 'Website\Controllers' );
 
@@ -12,10 +13,39 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 	// Lees de docs, daar zie je hoe je routes kunt maken: https://github.com/skipperbent/simple-php-router#routes
 
 	SimpleRouter::get( '/', 'WebsiteController@home' )->name( 'home' );
-	SimpleRouter::get( '/admin', 'AdminController@index' )->name( 'admin' );
-	SimpleRouter::get('/registreren', 'RegistrationController@registrationForm')->name('register.form');
-	SimpleRouter::post('/registreren/verwerken', 'RegistrationController@handleRegistrationForm')->name('register.handle');
-	SimpleRouter::get('/registreren/bedankt', 'RegistrationController@registrationThankYou')->name('register.thankyou');
+
+
+	SimpleRouter::group(['prefix' => '/registreren'], function(){
+
+		SimpleRouter::get( '/admin', 'AdminController@index' )->name( 'admin.index' );
+
+	});
+
+	SimpleRouter::group(['prefix' => '/registreren'], function(){
+
+		SimpleRouter::get('/', 'RegistrationController@registrationForm')->name('register.form');
+		SimpleRouter::post('/verwerken', 'RegistrationController@handleRegistrationForm')->name('register.handle');
+		SimpleRouter::get('/bedankt', 'RegistrationController@registrationThankYou')->name('register.thankyou');
+
+	});
+	
+
+	//login routes
+	SimpleRouter::get('/login', 'LoginController@LoginForm')->name('login.form');
+	SimpleRouter::post('/login/verwerken', 'LoginController@handleLoginForm')->name('login.handle');
+	SimpleRouter::get('/logout', 'LoginController@Logout')->name('logout');
+
+	//Secure (ingelogde gebruikers) routes
+	SimpleRouter::group(['prefix' => '/ingelogd', 'middleware' => IsAuthenticated::class], function(){
+
+		SimpleRouter::get('/', 'SecureController@index')->name('secure.index');
+
+	});
+
+
+	
+	SimpleRouter::get('/ingelogd/dashboard', 'LoginController@userDashboard')->name('login.dashboard');
+
 
 	// STOP: Tot hier al je eigen URL's zetten, dit stukje laat de 4040 pagina zien als een route/url niet kan worden gevonden.
 	SimpleRouter::get( '/not-found', function () {
@@ -31,7 +61,7 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 SimpleRouter::error( function ( Request $request, \Exception $exception ) {
 	if ( $exception instanceof NotFoundHttpException && $exception->getCode() === 404 ) {
 		response()->redirect( site_url() . '/not-found' );
-	}
+	}      
 
 } );
 
